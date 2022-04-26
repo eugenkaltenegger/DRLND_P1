@@ -1,0 +1,4 @@
+bin/Banana_Linux
+*.log
+.ipynb_checkpoints
+.idea
