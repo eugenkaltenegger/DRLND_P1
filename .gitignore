@@ -1,5 +1,6 @@
 /env
 *.log
 /__pychache__
+/src/__pychache__
 .ipynb_checkpoints
 .idea
