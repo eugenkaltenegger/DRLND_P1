@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as functional
 from itertools import cycle
 
 from collections import OrderedDict
@@ -27,14 +26,17 @@ class QNetwork(nn.Module):
         layers = [nn.Linear(layer[0], layer[1]) for layer in layers]
         layers_dict = OrderedDict(zip(layer_names, layers))
 
-        relu_names = ["relu{}".format(counter) for counter in range(0, len(hidden_size))]
-        relus = [nn.ReLU() for counter in range(0, len(hidden_size))]
+        relu_names = ["relu{}".format(counter) for counter in range(0, len(hidden_size) + 1)]
+        relus = [nn.ReLU() for counter in range(0, len(hidden_size) + 1)]
         relu_dict = OrderedDict(zip(relu_names, relus))
 
-        iterators = [iter(layers_dict), iter(relu_dict)]
-        model_list = list(iterator.__next__() for iterator in cycle(iterators))
+        key_iterators = [iter(layers_dict.keys()), iter(relu_dict.keys())]
+        values_iterators = [iter(layers_dict.values()), iter(relu_dict.values())]
 
-        self.model_sequential = nn.Sequential(OrderedDict(model_list))
+        key_list = list(iterator.__next__() for iterator in cycle(key_iterators))
+        value_list = list(iterator.__next__() for iterator in cycle(values_iterators))
+
+        self.model_sequential = nn.Sequential(OrderedDict(zip(key_list, value_list)))
 
     def forward(self, state):
         return self.model_sequential(state)

@@ -8,8 +8,8 @@ from collections import OrderedDict
 from collections import deque
 from matplotlib import pyplot
 
-from agent import Agent
-from environment import Environment
+from src.agent import Agent
+from src.environment import Environment
 
 
 class Navigation:
@@ -18,16 +18,17 @@ class Navigation:
         logging.StreamHandler.terminator = ""
 
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        self.world = None
         self.environment = None
         self.agent = None
 
         self.hp = OrderedDict()  # hyperparameters
-        self.hp["layers"] = [128, 64, 32]
-        self.hp["buffer_size"] = 1024
-        self.hp["batch_size"] = 64
+        self.hp["layers"] = [256, 128, 64]
+        self.hp["buffer_size"] = 2048
+        self.hp["batch_size"] = 32
         self.hp["batch_frequency"] = 16
-        self.hp["episodes"] = 2500
-        self.hp["steps_per_episode"] = 1000
+        self.hp["episodes"] = 2000
+        self.hp["steps_per_episode"] = 1500
         self.hp["epsilon_start"] = 0.10
         self.hp["epsilon_end"] = 0.01
         self.hp["epsilon_factor"] = 0.99
@@ -37,13 +38,14 @@ class Navigation:
         self.hpr["buffer_size"] = [2048]
         self.hpr["batch_size"] = [256]
         self.hpr["batch_frequency"] = [16]
-        self.hpr["episodes"] = [4096]
-        self.hpr["steps_per_episode"] = [4096]
+        self.hpr["episodes"] = [4000]
+        self.hpr["steps_per_episode"] = [1000, 2000]
         self.hpr["epsilon_start"] = [1.00]
         self.hpr["epsilon_end"] = [0.01]
         self.hpr["epsilon_factor"] = [0.99]
 
-    def setup(self, mode):
+    def setup(self, mode, world):
+        self.world = world
         if mode == "train":
             logging.info("\rmode: TRAINING\n")
             absolute_scores, average_scores = self.train(filename="agent_state.pth")
@@ -78,7 +80,7 @@ class Navigation:
 
     def create_environment(self, graphics=False):
         logging.info("\rcreating environment\n")
-        self.environment = Environment(graphics=graphics)
+        self.environment = Environment(world=self.world, graphics=graphics)
         return self.reset_environment(created=True)
 
     def reset_environment(self, created=False):
@@ -169,8 +171,6 @@ class Navigation:
         for hp_combination in hp_combinations:
             self.hp = OrderedDict(zip(self.hp.keys(), hp_combination))
             current_scores, average_scores = self.train()
-            # self.plot(current_scores)
-            # self.plot(average_scores)
 
             current_score = numpy.average(current_scores[-100:])
             if best_score is None or current_score > best_score:
@@ -223,4 +223,4 @@ class Navigation:
 
 
 if __name__ == "__main__":
-    Navigation().setup(mode=sys.argv[1])
+    Navigation().setup(mode=sys.argv[1], world="Banana")

@@ -4,8 +4,9 @@ import random
 from torch import optim
 from torch.nn import functional
 
-from buffer import Buffer
-from model import QNetwork
+
+from src.model import QNetwork
+from src.buffer import Buffer
 
 
 class Agent:
