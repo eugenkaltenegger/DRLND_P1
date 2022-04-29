@@ -4,7 +4,6 @@ import random
 from torch import optim
 from torch.nn import functional
 
-
 from src.model import QNetwork
 from src.buffer import Buffer
 
@@ -57,7 +56,8 @@ class Agent:
         self.q_network_local.eval()
         with torch.no_grad():
             action_values = self.q_network_local(state)
-        self.q_network_local.train()
+        # TODO: check if required
+        # self.q_network_local.train()
 
         if random.random() > self.epsilon:
             action = numpy.argmax(action_values.cpu().data.numpy())
@@ -97,3 +97,10 @@ class Agent:
 
     def save(self, filename):
         torch.save(self.q_network_local.state_dict(), filename)
+
+    def load(self, filename):
+        checkpoint = torch.load(filename)
+        self.q_network_local = QNetwork.Network(checkpoint['input_size'],
+                                                checkpoint['output_size'],
+                                                checkpoint['hidden_layers']).to(self.device)
+        self.q_network_local.load_state_dict(checkpoint['state_dict'])

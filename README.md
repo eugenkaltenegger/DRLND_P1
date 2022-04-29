@@ -49,16 +49,17 @@ The resulting file structure should look like shown below:
 │       └── Banana.x86_64
 ```
 
-To create a conda workspace with the dependencies required for this repository (listed in `requirements.txt`) run the following command in the base directory of this repository:
+To create a conda envirnment and install the packages required for this repository run the following command:
 ```bash
-conda create --name kalteneger_p1_navigation --file requirements.txt
+conda env create --file requirements.yaml
 ```
+
 This conda environment has to be activated with the following command:
 ```bash
 conda activate kalteneger_p1_navigation
 ```
 
-With the active conda environment the preparation to run the code is complete.
+With the active conda environment and the installed dependencies the preparation to run the code is completed.
 
 ###Execution
 
@@ -77,6 +78,31 @@ To code provided in this repository has three operation modes:
   This mode is for visualization purposes only.
 
 ###Findings
+
+While solving this exercise various configurations have been tried.
+
+The agent was able to learn fast with three layers where the layer size decreases from layer to layer.
+Layersizes between 512 and 256 work very well.
+The buffer size had a small impact on the agent's performance while the batch size and the number of steps after which the agent learns the batch had a higher impact.
+A high number of steps per episode help to ensure that the agent is provided with sufficient experience per episode.
+If the number of steps per episode is too low the training is not working as intended.
+A high starting epsilon value ensures that the agent starts with random actions.
+The probability for random actions shrinks after each episode until epsilon reaches its minimum.
+
+The following hyperparameter work very well:
+```python
+    self.hp["layers"] = [256, 128, 64]
+    self.hp["buffer_size"] = 2048
+    self.hp["batch_size"] = 32
+    self.hp["batch_frequency"] = 16
+    self.hp["episodes"] = 2000
+    self.hp["steps_per_episode"] = 1500
+    self.hp["epsilon_start"] = 0.10
+    self.hp["epsilon_end"] = 0.01
+    self.hp["epsilon_factor"] = 0.99
+```
+
+With these values it was possible to solve the environment after 600 to 700 episodes.
 
 ### Improvements
 In the task description a benchmark solving the environment in about 1800 episodes is provided.

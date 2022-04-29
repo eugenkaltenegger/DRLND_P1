@@ -36,12 +36,12 @@ class Navigation:
         self.hp["epsilon_factor"] = 0.99
 
         self.hpr = OrderedDict()  # hyperparameters_range
-        self.hpr["layers"] = [[512, 256, 32]]
+        self.hpr["layers"] = [[256, 128, 64]]
         self.hpr["buffer_size"] = [2048]
         self.hpr["batch_size"] = [32]
         self.hpr["batch_frequency"] = [16]
         self.hpr["episodes"] = [4000]
-        self.hpr["steps_per_episode"] = [1000, 2000]
+        self.hpr["steps_per_episode"] = [2000]
         self.hpr["epsilon_start"] = [1.00]
         self.hpr["epsilon_end"] = [0.01]
         self.hpr["epsilon_factor"] = [0.99]
@@ -51,8 +51,8 @@ class Navigation:
         if mode == "train":
             logging.info("\rMODE: training\n")
             absolute_scores, average_scores = self.train(filename="agent_state.pth")
-            self.plot(scores=absolute_scores, filename="absolute_scores")
-            self.plot(scores=average_scores, filename="average_scores")
+            self.plot(scores=absolute_scores, filename="absolute_scores.png")
+            self.plot(scores=average_scores, filename="average_scores.png")
 
         if mode == "tune":
             logging.info("\rMODE: training\n")
@@ -184,6 +184,9 @@ class Navigation:
 
         logging.info("\rBEST SOLUTION AFTER {:4d} WITH A SCORE OF {:4.2f}\n".format(best_episode_counter, best_score))
         self.log_hp(best_hp, line=False)
+
+    def show(self):
+        pass
 
     @staticmethod
     def log_hp(hp, line=True):
