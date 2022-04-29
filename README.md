@@ -99,6 +99,9 @@ The number of layers and the size of each layer are read when the agent is creat
 These values can be set in the `naviagtion.py` file.
 Each layer, expect the last is followed by ReLU function.
 
+The agent shown in this repository learns not after each step, it learns after a given number of steps the results from a few steps.
+This is called batch learning and a key feature of the DQN architecture.
+
 ###Findings
 
 While solving this exercise various configurations have been tried.
@@ -126,20 +129,24 @@ The following hyperparameter work very well for the `Banana` environment (not `P
 ```python
     self.hp["layers"] = [256, 128, 64]
     self.hp["buffer_size"] = 2048
-    self.hp["batch_size"] = 32
+    self.hp["batch_size"] = 16
     self.hp["batch_frequency"] = 4
     self.hp["episodes"] = 2000
-    self.hp["steps_per_episode"] = 1500
+    self.hp["steps_per_episode"] = 2000
     self.hp["epsilon_start"] = 0.10
     self.hp["epsilon_end"] = 0.01
-    self.hp["epsilon_factor"] = 0.95
+    self.hp["epsilon_factor"] = 0.99
 ```
 
 With these values it was possible to solve the environment after 500 to 700 episodes.
 
 The agent is also able to solve the `PixelBanana` environment, but for this environment the parameters have not been tweaked.
 
-### Improvements
+The following pictures have been created with the parameters shown above:
+- `scores_absolute`: shows the scores of each episode
+- `scores_relative`: shows the average score over 100 episodes, calculated after each episode (less noisy than `scores absolute`)
+
+###Improvements
 
 In the task description a benchmark solving the environment in about 1800 episodes is provided.
 The solution presented in this repository is capable to solve the environment in about 500 to 700 episodes with the parameters provided above.

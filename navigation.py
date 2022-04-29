@@ -189,6 +189,7 @@ class Navigation:
     def show(self):
         # verify environment is created and reset
         self.create_environment(graphics=True, train_mode=False) if self.environment is None else self.reset_environment(train_mode=True)
+        state = self.reset_environment(train_mode=False)
 
         # verify agent is created and reset
         self.create_agent() if self.agent is None else self.reset_agent()

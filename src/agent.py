@@ -96,11 +96,15 @@ class Agent:
             target_param.data.copy_(tau * local_param.data + (1.0 - tau) * target_param.data)
 
     def save(self, filename):
-        torch.save(self.q_network_local.state_dict(), filename)
+        checkpoint = {'input_size': self.state_size,
+                      'output_size': self.action_size,
+                      'hidden_layers': self.layers,
+                      'state_dict': self.q_network_local.state_dict()}
+        torch.save(checkpoint, filename)
 
     def load(self, filename):
         checkpoint = torch.load(filename)
-        self.q_network_local = QNetwork.Network(checkpoint['input_size'],
-                                                checkpoint['output_size'],
-                                                checkpoint['hidden_layers']).to(self.device)
+        self.q_network_local = QNetwork(checkpoint['input_size'],
+                                        checkpoint['output_size'],
+                                        checkpoint['hidden_layers']).to(self.device)
         self.q_network_local.load_state_dict(checkpoint['state_dict'])
