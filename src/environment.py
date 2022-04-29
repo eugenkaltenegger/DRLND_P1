@@ -7,7 +7,7 @@ class Environment:
         if world == "Banana":
             environment_file_name = "./env/Banana_Linux/Banana.x86_64"
         if world == "VisualBanana":
-            environment_file_name = "./env/VisualBanana_Linux/Banana.x86_64"
+            environment_file_name = "./env/PixelBanana_Linux/Banana.x86_64"
 
         self.env = UnityEnvironment(file_name=environment_file_name, no_graphics=not graphics)
         self.brain_names = self.env.brain_names

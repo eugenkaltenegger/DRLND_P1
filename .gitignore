@@ -1,4 +1,5 @@
-/env
+/env/Banana_Linux
+/env/PixelBanana_Linux
 *.log
 **/__pychache__/
 .ipynb_checkpoints
