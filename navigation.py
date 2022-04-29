@@ -165,6 +165,7 @@ class Navigation:
         self.log_hpr(self.hpr)
 
         best_score = 0
+        best_episode_counter = None
         best_hp = None
 
         hp_iterators = [iter(hpr) for hpr in self.hpr.values()]
@@ -174,12 +175,14 @@ class Navigation:
             self.hp = OrderedDict(zip(self.hp.keys(), hp_combination))
             current_scores, average_scores = self.train()
 
+            current_episodes_counter = len(current_scores)
             current_score = numpy.average(current_scores[-100:])
-            if best_score is None or current_score > best_score:
+            if best_episode_counter is None or current_episodes_counter < best_episode_counter:
+                best_episode_counter = current_episodes_counter
                 best_score = current_score
                 best_hp = self.hp.copy()
 
-        logging.info("\rBEST SCORE: {:4.2f}\n".format(best_score))
+        logging.info("\rBEST SOLUTION AFTER {:4d} WITH A SCORE OF {:4.2f}\n".format(best_episode_counter, best_score))
         self.log_hp(best_hp, line=False)
 
     @staticmethod
