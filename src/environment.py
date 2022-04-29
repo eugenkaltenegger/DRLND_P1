@@ -22,10 +22,10 @@ class Environment:
     def get(self):
         return self.env
 
-    def reset(self, brain_name=None):
+    def reset(self, brain_name=None, train_mode=True):
         if brain_name is None:
             brain_name = self.default_brain_name
-        env_info = self.env.reset(train_mode=True)[brain_name]
+        env_info = self.env.reset(train_mode=train_mode)[brain_name]
         return env_info.vector_observations[0]
 
     def action(self, action, brain_name=None):

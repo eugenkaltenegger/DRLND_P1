@@ -27,10 +27,10 @@ class Navigation:
         self.hp = OrderedDict()  # hyperparameters
         self.hp["layers"] = [256, 128, 64]
         self.hp["buffer_size"] = 2048
-        self.hp["batch_size"] = 32
-        self.hp["batch_frequency"] = 16
+        self.hp["batch_size"] = 16
+        self.hp["batch_frequency"] = 4
         self.hp["episodes"] = 2000
-        self.hp["steps_per_episode"] = 1500
+        self.hp["steps_per_episode"] = 2000
         self.hp["epsilon_start"] = 0.10
         self.hp["epsilon_end"] = 0.01
         self.hp["epsilon_factor"] = 0.99
@@ -44,15 +44,15 @@ class Navigation:
         self.hpr["steps_per_episode"] = [2000]
         self.hpr["epsilon_start"] = [1.00]
         self.hpr["epsilon_end"] = [0.01]
-        self.hpr["epsilon_factor"] = [0.99]
+        self.hpr["epsilon_factor"] = [0.95]
 
     def setup(self, mode, world):
         self.world = world
         if mode == "train":
             logging.info("\rMODE: training\n")
             absolute_scores, average_scores = self.train(filename="agent_state.pth")
-            self.plot(scores=absolute_scores, filename="absolute_scores.png")
-            self.plot(scores=average_scores, filename="average_scores.png")
+            self.plot(scores=absolute_scores, filename="scores_absolute.png")
+            self.plot(scores=average_scores, filename="scores_average.png")
 
         if mode == "tune":
             logging.info("\rMODE: training\n")
@@ -60,6 +60,7 @@ class Navigation:
 
         if mode == "show":
             logging.info("\rMODE: show\n")
+            self.show()
 
     def create_agent(self):
         logging.info("\rcreating agent\n")
@@ -80,15 +81,15 @@ class Navigation:
                            epsilon_factor=self.hp["epsilon_factor"])
         return self.agent
 
-    def create_environment(self, graphics=False):
+    def create_environment(self, graphics=False, train_mode=True):
         logging.info("\rcreating environment\n")
         self.environment = Environment(world=self.world, graphics=graphics)
         return self.reset_environment(created=True)
 
-    def reset_environment(self, created=False):
+    def reset_environment(self, created=False, train_mode=True):
         if not created:
             logging.debug("\rresetting environment\n")
-        return self.environment.reset()
+        return self.environment.reset(train_mode=train_mode)
 
     def train(self, episodes=None, steps_per_episode=None, filename=None):
         # parameters
@@ -152,7 +153,7 @@ class Navigation:
                          .format(episode_counter, average_score))
 
         if filename is not None and self.agent is not None:
-            self.agent.save()
+            self.agent.save(filename=filename)
 
         return list(scores_total), list(average_scores)
 
@@ -186,7 +187,22 @@ class Navigation:
         self.log_hp(best_hp, line=False)
 
     def show(self):
-        pass
+        # verify environment is created and reset
+        self.create_environment(graphics=True, train_mode=False) if self.environment is None else self.reset_environment(train_mode=True)
+
+        # verify agent is created and reset
+        self.create_agent() if self.agent is None else self.reset_agent()
+        self.agent.load("agent_state.pth")
+
+        for step in range(10000):
+            action = self.agent.act(state=state)
+            environment_change = self.environment.action(action)
+            next_state = environment_change["next_state"]
+            done = environment_change["done"]
+            state = next_state
+            if done:
+                break  # break for steps iteration
+
 
     @staticmethod
     def log_hp(hp, line=True):
