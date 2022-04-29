@@ -22,6 +22,8 @@ class Navigation:
         self.environment = None
         self.agent = None
 
+        logging.info("\rDEVICE: {}\n".format(self.device))
+
         self.hp = OrderedDict()  # hyperparameters
         self.hp["layers"] = [256, 128, 64]
         self.hp["buffer_size"] = 2048
@@ -34,9 +36,9 @@ class Navigation:
         self.hp["epsilon_factor"] = 0.99
 
         self.hpr = OrderedDict()  # hyperparameters_range
-        self.hpr["layers"] = [[128, 64, 32]]
+        self.hpr["layers"] = [[512, 256, 32]]
         self.hpr["buffer_size"] = [2048]
-        self.hpr["batch_size"] = [256]
+        self.hpr["batch_size"] = [32]
         self.hpr["batch_frequency"] = [16]
         self.hpr["episodes"] = [4000]
         self.hpr["steps_per_episode"] = [1000, 2000]
@@ -47,17 +49,17 @@ class Navigation:
     def setup(self, mode, world):
         self.world = world
         if mode == "train":
-            logging.info("\rmode: TRAINING\n")
+            logging.info("\rMODE: training\n")
             absolute_scores, average_scores = self.train(filename="agent_state.pth")
             self.plot(scores=absolute_scores, filename="absolute_scores")
             self.plot(scores=average_scores, filename="average_scores")
 
         if mode == "tune":
-            logging.info("\rmode: TUNING\n")
+            logging.info("\rMODE: training\n")
             self.tune()
 
         if mode == "show":
-            logging.info("\rmode: SHOW\n")
+            logging.info("\rMODE: show\n")
 
     def create_agent(self):
         logging.info("\rcreating agent\n")

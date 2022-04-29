@@ -26,8 +26,8 @@ class QNetwork(nn.Module):
         layers = [nn.Linear(layer[0], layer[1]) for layer in layers]
         layers_dict = OrderedDict(zip(layer_names, layers))
 
-        relu_names = ["relu{}".format(counter) for counter in range(0, len(hidden_size) + 1)]
-        relus = [nn.ReLU() for counter in range(0, len(hidden_size) + 1)]
+        relu_names = ["relu{}".format(counter) for counter in range(0, len(hidden_size))]
+        relus = [nn.ReLU() for counter in range(0, len(hidden_size))]
         relu_dict = OrderedDict(zip(relu_names, relus))
 
         key_iterators = [iter(layers_dict.keys()), iter(relu_dict.keys())]
@@ -36,7 +36,9 @@ class QNetwork(nn.Module):
         key_list = list(iterator.__next__() for iterator in cycle(key_iterators))
         value_list = list(iterator.__next__() for iterator in cycle(values_iterators))
 
-        self.model_sequential = nn.Sequential(OrderedDict(zip(key_list, value_list)))
+        model_dict = OrderedDict(zip(key_list, value_list))
+
+        self.model_sequential = nn.Sequential(model_dict)
 
     def forward(self, state):
         return self.model_sequential(state)
