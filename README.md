@@ -1,6 +1,6 @@
-#Udacity - Deep Reinforcement Learning - Project 1
+# Udacity - Deep Reinforcement Learning - Project 1
 
-##Project Description
+## Project Description
 
 The task of this project is to train an agent to navigate in an environment with bananas where yellow bananas shall be collected and blue bananas shall be avoided.
 In this environment a reward of +1 is granted for collecting a yellow banana and a reward of -1 is granted for collecting a blue banana.
@@ -16,7 +16,7 @@ The agent shall utilize the DQN architecture presented in the [DQN paper](DQN).
 
 [DQN]: https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf
 
-###Dependencies
+### Dependencies
 
 **THIS SECTION ASSUMES THE READER/USER IS USING LINUX**
 
@@ -52,7 +52,7 @@ conda activate kalteneger_p1_navigation
 
 With the active conda environment and the installed dependencies the preparation to run the code is completed.
 
-###Execution
+### Execution
 
 **THIS SECTION ASSUMES THE READER/USER IS USING LINUX**
 
